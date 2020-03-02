@@ -1,0 +1,20 @@
+{
+  "name": "delboy1978uk/bone-router",
+  "description": "Router package for Bone MVC Framework",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Derek Stephen McLean",
+      "email": "delboy1978uk@gmail.com"
+    }
+  ],
+  "require": {},
+  "require-dev": {
+    "roave\/security-advisories": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bone\\Router\\": "src/"
+    }
+  }
+}
