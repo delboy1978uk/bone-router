@@ -5,7 +5,7 @@ namespace Bone\Router;
 use Bone\Router\Decorator\ExceptionDecorator;
 use Bone\Router\Decorator\NotAllowedDecorator;
 use Bone\Router\Decorator\NotFoundDecorator;
-use Bone\View\PlatesEngine;
+use Bone\View\ViewEngine;
 use Bone\Traits\HasLayoutTrait;
 use Exception;
 use League\Route\Http\Exception\{MethodNotAllowedException, NotFoundException};
@@ -24,7 +24,7 @@ class PlatesStrategy extends ApplicationStrategy implements StrategyInterface
 {
     use HasLayoutTrait;
 
-    /** @var PlatesEngine $viewEngine */
+    /** @var ViewEngine $viewEngine */
     private $viewEngine;
 
     /** @var NotFoundDecorator $notFoundDecorator */
@@ -38,12 +38,12 @@ class PlatesStrategy extends ApplicationStrategy implements StrategyInterface
 
     /**
      * PlatesStrategy constructor.
-     * @param PlatesEngine $viewEngine
+     * @param ViewEngine $viewEngine
      * @param NotFoundDecorator $notFound
      * @param NotAllowedDecorator $notAllowed
      * @param string $layout
      */
-    public function __construct(PlatesEngine $viewEngine, NotFoundDecorator $notFound, NotAllowedDecorator $notAllowed, string $layout, ExceptionDecorator $exceptionDecorator)
+    public function __construct(ViewEngine $viewEngine, NotFoundDecorator $notFound, NotAllowedDecorator $notAllowed, string $layout, ExceptionDecorator $exceptionDecorator)
     {
         $this->viewEngine = $viewEngine;
         $this->notFoundDecorator = $notFound;
