@@ -8,13 +8,21 @@
       "email": "delboy1978uk@gmail.com"
     }
   ],
-  "require": {},
+  "require": {
+    "league/route": "4.3.1"
+  },
   "require-dev": {
+    "codeception/codeception": "^2.2",
     "roave\/security-advisories": "dev-master"
   },
   "autoload": {
     "psr-4": {
       "Bone\\Router\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "BoneTest\\": "tests/unit/"
     }
   }
 }
