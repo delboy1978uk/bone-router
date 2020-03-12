@@ -1,0 +1,167 @@
+<?php
+
+namespace Barnacle\Tests;
+
+use Barnacle\Container;
+use Barnacle\ExceptionotFoundException;
+use Bone\Firewall\FirewallPackage;
+use Bone\Firewall\RouteFirewall;
+use Bone\Http\Middleware\HalCollection;
+use Bone\Http\Middleware\HalEntity;
+use Bone\Http\Middleware\Stack;
+use Bone\I18n\Form;
+use Bone\I18n\Http\Middleware\I18nMiddleware;
+use Bone\I18n\I18nPackage;
+use Bone\I18n\Service\TranslatorFactory;
+use Bone\I18n\View\Extension\LocaleLink;
+use Bone\I18n\View\Extension\Translate;
+use Bone\Log\LogPackage;
+use Bone\Router\PlatesStrategy;
+use Bone\Router\Router;
+use Bone\Router\RouterPackage;
+use Bone\View\ViewPackage;
+use BoneTest\AnotherFakeRequestHandler;
+use BoneTest\FakeController;
+use BoneTest\FakeMiddleware;
+use BoneTest\FakePackage\FakePackagePackage;
+use BoneTest\FakeRequestHandler;
+use BoneTest\MiddlewareTestHandler;
+use BoneTest\RouterHandler;
+use Codeception\TestCase\Test;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Stream;
+use Laminas\Diactoros\Uri;
+use Laminas\I18n\Translator\Loader\Gettext;
+use Laminas\I18n\Translator\Translator;
+use League\Route\Route;
+use Locale;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
+
+class RouterTest extends Test
+{
+    /** @var Container */
+    protected $container;
+
+    protected function _before()
+    {
+        $this->container = $c = new Container();
+        $this->container['viewFolder'] = 'tests/_data';
+        $this->container['default_layout'] = 'whatever';
+        $this->container['error_pages'] = [
+            'exception' => 'error/error',
+            401 => 'error/not-authorised',
+            403 => 'error/not-authorised',
+            404 => 'error/not-found',
+            405 => 'error/not-allowed',
+            500 => 'error/error',
+        ];
+        $router = new Router();
+        $this->container[Router::class] = $router;
+        $package = new ViewPackage();
+        $package->addToContainer($this->container);
+        $package = new RouterPackage();
+        $package->addToContainer($this->container);
+    }
+
+    protected function _after()
+    {
+        unset($this->container);
+    }
+
+    public function testRouter()
+    {
+        $router = $this->container->get(Router::class);
+        $router->map('GET', '/whatever', [RouterHandler::class, 'handle']);
+        $routes = $router->getRoutes();
+        $this->assertCount(1, $routes);
+        $router->removeRoute($routes[0]);
+        $routes = $router->getRoutes();
+        $this->assertCount(0, $routes);
+        $router->map('GET', '/whatever', [RouterHandler::class, 'handle']);
+        $request = new ServerRequest([], [], '/whatever');
+        $response = $router->handle($request);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+    }
+
+    public function testJson()
+    {
+        $router = $this->container->get(Router::class);
+        $router->map('GET', '/json', [RouterHandler::class, 'json']);
+        $request = new ServerRequest([], [], '/json');
+        /** @var ResponseInterface $response */
+        $response = $router->handle($request);
+        $response->getBody()->rewind();
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertEquals('{"pong":"2020-04-06"}', $response->getBody()->getContents());
+    }
+
+
+
+    public function test500()
+    {
+        $router = $this->container->get(Router::class);
+        $router->map('GET', '/death-by-exception', [RouterHandler::class, 'explode']);
+        $request = new ServerRequest([], [], '/death-by-exception');
+        /** @var ResponseInterface $response */
+        $response = $router->handle($request);
+        $this->assertEquals(500, $response->getStatusCode());
+    }
+
+
+    public function test403()
+    {
+        $router = $this->container->get(Router::class);
+        $router->map('GET', '/denied', [RouterHandler::class, 'deny']);
+        $request = new ServerRequest([], [], '/denied');
+        /** @var ResponseInterface $response */
+        $response = $router->handle($request);
+        $this->assertEquals(403, $response->getStatusCode());
+    }
+
+
+
+    public function test405()
+    {
+        $router = $this->container->get(Router::class);
+        $router->map('GET', '/json', [RouterHandler::class, 'json']);
+        $request = new ServerRequest([], [], '/json', 'POST');
+        /** @var ResponseInterface $response */
+        $response = $router->handle($request);
+        $this->assertEquals(405, $response->getStatusCode());
+    }
+
+    public function test404()
+    {
+        $request = new ServerRequest([], [], '/lost');
+        $router = $this->container->get(Router::class);
+        /** @var ResponseInterface $response */
+        $response = $router->handle($request);
+        $response->getBody()->rewind();
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertEquals(404, $response->getStatusCode());
+        $body = <<<BODY
+<html>
+<head></head>
+<body>
+    <section class="intro">
+    <div class="intro-body">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+
+                    <img src="/img/skull_and_crossbones.png" />
+                    <h1 class="brand-heading">Lost at sea</h1>
+                    <p class="intro-text">Th' page canna be found, Cap'n.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section></body>
+</html>
+
+BODY;
+        $this->assertEquals($body, $response->getBody()->getContents());
+    }
+}

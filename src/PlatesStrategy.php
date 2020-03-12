@@ -62,7 +62,7 @@ class PlatesStrategy extends ApplicationStrategy implements StrategyInterface
      */
     public function invokeRouteCallable(Route $route, ServerRequestInterface $request): ResponseInterface
     {
-        try {
+//        try {
 
             $response = parent::invokeRouteCallable($route, $request);
             $contentType = $response->getHeader('Content-Type');
@@ -76,19 +76,19 @@ class PlatesStrategy extends ApplicationStrategy implements StrategyInterface
 
             return $this->getResponseWithBodyAndStatus($response, $body, $response->getStatusCode());
 
-        } catch (Exception $e) {
-            $body = $this->viewEngine->render('error/error', [
-                'message' => $e->getMessage(),
-                'code' => $e->getCode(),
-                'trace' => $e->getTrace(),
-            ]);
-            $body = $this->viewEngine->render($this->layout, [
-                'content' => $body,
-            ]);
-            $status = ($e->getCode() >= 100 && $e->getCode() < 600) ? $e->getCode() : 500;
-
-            return $this->getResponseWithBodyAndStatus(new HtmlResponse($body), $body, $status);
-        }
+//        } catch (Exception $e) {
+//            $body = $this->viewEngine->render('error/error', [
+//                'message' => $e->getMessage(),
+//                'code' => $e->getCode(),
+//                'trace' => $e->getTrace(),
+//            ]);
+//            $body = $this->viewEngine->render($this->layout, [
+//                'content' => $body,
+//            ]);
+//            $status = ($e->getCode() >= 100 && $e->getCode() < 600) ? $e->getCode() : 500;
+//
+//            return $this->getResponseWithBodyAndStatus(new HtmlResponse($body), $body, $status);
+//        }
 
     }
 

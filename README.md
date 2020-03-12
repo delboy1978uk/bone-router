@@ -1,23 +1,9 @@
 # router
+[![Latest Stable Version](https://poser.pugx.org/delboy1978uk/bone-router/v/stable)](https://packagist.org/packages/delboy1978uk/bone-router) [![Total Downloads](https://poser.pugx.org/delboy1978uk/bone/downloads)](https://packagist.org/packages/delboy1978uk/bone) [![Latest Unstable Version](https://poser.pugx.org/delboy1978uk/bone-router/v/unstable)](https://packagist.org/packages/delboy1978uk/bone-router) [![License](https://poser.pugx.org/delboy1978uk/bone-router/license)](https://packagist.org/packages/delboy1978uk/bone-router)<br />
+[![Build Status](https://travis-ci.org/delboy1978uk/bone-router.png?branch=master)](https://travis-ci.org/delboy1978uk/bone-router) [![Code Coverage](https://scrutinizer-ci.com/g/delboy1978uk/bone-router/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/delboy1978uk/bone-router/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/delboy1978uk/bone-router/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/delboy1978uk/bone-router/?branch=master)<br />
+
 Router package for Bone Mvc Framework
 ## installation
-Use Composer
-```
-composer require delboy1978uk/bone-router
-```
+The router is part of the Bone Framework core and so comes installed.
 ## usage
-Simply add to the `config/packages.php`
-```php
-<?php
-
-// use statements here
-use Bone\Router\RouterPackage;
-
-return [
-    'packages' => [
-        // packages here...,
-        RouterPackage::class,
-    ],
-    // ...
-];
-```
+Make your package registration class implement `Bone\Router\RouterConfigInterface`. 
