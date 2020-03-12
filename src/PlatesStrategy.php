@@ -62,34 +62,17 @@ class PlatesStrategy extends ApplicationStrategy implements StrategyInterface
      */
     public function invokeRouteCallable(Route $route, ServerRequestInterface $request): ResponseInterface
     {
-//        try {
+        $response = parent::invokeRouteCallable($route, $request);
+        $contentType = $response->getHeader('Content-Type');
 
-            $response = parent::invokeRouteCallable($route, $request);
-            $contentType = $response->getHeader('Content-Type');
+        if ($contentType && strstr($contentType[0], 'application/json')) {
+            return $response;
+        }
 
-            if ($contentType && strstr($contentType[0], 'application/json')) {
-                return $response;
-            }
+        $body = ['content' => $response->getBody()->getContents()];
+        $body = $this->viewEngine->render($this->layout, $body);
 
-            $body = ['content' => $response->getBody()->getContents()];
-            $body = $this->viewEngine->render($this->layout, $body);
-
-            return $this->getResponseWithBodyAndStatus($response, $body, $response->getStatusCode());
-
-//        } catch (Exception $e) {
-//            $body = $this->viewEngine->render('error/error', [
-//                'message' => $e->getMessage(),
-//                'code' => $e->getCode(),
-//                'trace' => $e->getTrace(),
-//            ]);
-//            $body = $this->viewEngine->render($this->layout, [
-//                'content' => $body,
-//            ]);
-//            $status = ($e->getCode() >= 100 && $e->getCode() < 600) ? $e->getCode() : 500;
-//
-//            return $this->getResponseWithBodyAndStatus(new HtmlResponse($body), $body, $status);
-//        }
-
+        return $this->getResponseWithBodyAndStatus($response, $body, $response->getStatusCode());
     }
 
     /**
