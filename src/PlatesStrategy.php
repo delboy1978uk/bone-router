@@ -6,7 +6,7 @@ use Bone\Router\Decorator\ExceptionDecorator;
 use Bone\Router\Decorator\NotAllowedDecorator;
 use Bone\Router\Decorator\NotFoundDecorator;
 use Bone\View\ViewEngine;
-use Bone\Traits\HasLayoutTrait;
+use Bone\Router\Traits\HasLayoutTrait;
 use Exception;
 use League\Route\Http\Exception\{MethodNotAllowedException, NotFoundException};
 use League\Route\Route;

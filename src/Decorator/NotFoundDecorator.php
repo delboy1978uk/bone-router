@@ -3,7 +3,7 @@
 namespace Bone\Router\Decorator;
 
 use Bone\View\ViewEngine;
-use Bone\Traits\HasLayoutTrait;
+use Bone\Router\Traits\HasLayoutTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
