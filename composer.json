@@ -11,9 +11,9 @@
   "require": {
     "php": ">7.1",
     "delboy1978uk/barnacle": "^2.2",
-    "laminas/laminas-diactoros": "2.*",
-    "league/route": "4.3.1",
-    "delboy1978uk/bone-view": "^1.0"
+    "delboy1978uk/bone-view": "^1.0",
+    "delboy1978uk/router": "^4.3",
+    "laminas/laminas-diactoros": "2.*"
   },
   "require-dev": {
     "codeception/codeception": "^2.2",
