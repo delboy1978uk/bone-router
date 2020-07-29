@@ -67,7 +67,7 @@ class PlatesStrategy extends ApplicationStrategy implements StrategyInterface
         $isHtmlResponse = $response instanceof HtmlResponse;
         $hasHtmlContent = strstr($contentType[0], 'text/html');
 
-        if (!$isHtmlResponse || !$hasHtmlContent)) {
+        if (!$isHtmlResponse || !$hasHtmlContent) {
             return $response;
         }
 
