@@ -4,6 +4,7 @@ namespace Barnacle\Tests;
 
 use Barnacle\Container;
 use Barnacle\ExceptionotFoundException;
+use Exception;
 use Bone\Firewall\FirewallPackage;
 use Bone\Firewall\RouteFirewall;
 use Bone\Http\Middleware\HalCollection;
@@ -33,6 +34,8 @@ use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
 use Laminas\I18n\Translator\Loader\Gettext;
 use Laminas\I18n\Translator\Translator;
+use League\Route\Http\Exception\MethodNotAllowedException;
+use League\Route\Http\Exception\NotFoundException;
 use League\Route\Route;
 use Locale;
 use Psr\Http\Message\ResponseInterface;
@@ -50,12 +53,11 @@ class RouterTest extends Test
         $this->container['viewFolder'] = 'tests/_data';
         $this->container['default_layout'] = 'whatever';
         $this->container['error_pages'] = [
-            'exception' => 'error/error',
-            401 => 'error/not-authorised',
-            403 => 'error/not-authorised',
-            404 => 'error/not-found',
-            405 => 'error/not-allowed',
-            500 => 'error/error',
+            'exception' => 'error::error',
+            401 => 'error::not-authorised',
+            403 => 'error::not-found',
+            405 => 'error::not-allowed',
+            500 => 'error::error',
         ];
         $router = new Router();
         $this->container[Router::class] = $router;
@@ -104,9 +106,8 @@ class RouterTest extends Test
         $router = $this->container->get(Router::class);
         $router->map('GET', '/death-by-exception', [RouterHandler::class, 'explode']);
         $request = new ServerRequest([], [], '/death-by-exception');
-        /** @var ResponseInterface $response */
-        $response = $router->handle($request);
-        $this->assertEquals(500, $response->getStatusCode());
+        $this->expectException(Exception::class);
+        $router->handle($request);
     }
 
 
@@ -115,9 +116,9 @@ class RouterTest extends Test
         $router = $this->container->get(Router::class);
         $router->map('GET', '/denied', [RouterHandler::class, 'deny']);
         $request = new ServerRequest([], [], '/denied');
-        /** @var ResponseInterface $response */
-        $response = $router->handle($request);
-        $this->assertEquals(403, $response->getStatusCode());
+        $this->expectException(Exception::class);
+        $this->expectExceptionCode(403);
+        $router->handle($request);
     }
 
 
@@ -127,41 +128,15 @@ class RouterTest extends Test
         $router = $this->container->get(Router::class);
         $router->map('GET', '/json', [RouterHandler::class, 'json']);
         $request = new ServerRequest([], [], '/json', 'POST');
-        /** @var ResponseInterface $response */
-        $response = $router->handle($request);
-        $this->assertEquals(405, $response->getStatusCode());
+        $this->expectException(MethodNotAllowedException::class);
+        $router->handle($request);
     }
 
     public function test404()
     {
+        $this->expectException(NotFoundException::class);
         $request = new ServerRequest([], [], '/lost');
         $router = $this->container->get(Router::class);
-        /** @var ResponseInterface $response */
-        $response = $router->handle($request);
-        $response->getBody()->rewind();
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals(404, $response->getStatusCode());
-        $body = <<<BODY
-<html>
-<head></head>
-<body>
-    <section class="intro">
-    <div class="intro-body">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2">
-
-                    <img src="/img/skull_and_crossbones.png" />
-                    <h1 class="brand-heading">Lost at sea</h1>
-                    <p class="intro-text">Th' page canna be found, Cap'n.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section></body>
-</html>
-
-BODY;
-        $this->assertEquals($body, $response->getBody()->getContents());
+        $router->handle($request);
     }
 }
