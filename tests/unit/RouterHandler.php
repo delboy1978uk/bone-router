@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace BoneTest;
+namespace Bone\Test\Router;
 
 use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;

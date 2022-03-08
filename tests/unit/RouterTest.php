@@ -1,6 +1,6 @@
 <?php
 
-namespace Barnacle\Tests;
+namespace Bone\Test\Router;
 
 use Barnacle\Container;
 use Barnacle\ExceptionotFoundException;
