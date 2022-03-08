@@ -28,7 +28,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Bone\\Test\\Router": "tests/unit/"
+      "Bone\\Test\\Router\\": "tests/unit/"
     }
   }
 }
