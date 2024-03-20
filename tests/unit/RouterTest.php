@@ -28,7 +28,7 @@ use Bone\Test\Router\FakePackage\FakePackagePackage;
 use Bone\Test\Router\FakeRequestHandler;
 use Bone\Test\Router\MiddlewareTestHandler;
 use Bone\Test\Router\RouterHandler;
-use Codeception\TestCase\Test;
+use Codeception\Test\Unit;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
@@ -42,7 +42,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
-class RouterTest extends Test
+class RouterTest extends Unit
 {
     /** @var Container */
     protected $container;
