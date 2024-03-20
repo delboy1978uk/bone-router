@@ -30,5 +30,7 @@
     "psr-4": {
       "Bone\\Test\\Router\\": "tests/unit/"
     }
-  }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
