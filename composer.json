@@ -12,7 +12,7 @@
     "php": "^8.2",
     "delboy1978uk/barnacle": "^2.3",
     "delboy1978uk/bone-view": "dev-feature/php82and83 as 1.7.2",
-    "delboy1978uk/router": "^4.3",
+    "delboy1978uk/router": "^4.4",
     "laminas/laminas-diactoros": "^3.3"
   },
   "require-dev": {
