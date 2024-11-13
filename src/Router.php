@@ -4,6 +4,7 @@ namespace Bone\Router;
 
 use Bone\Http\RouterInterface;
 use League\Route\Route;
+use League\Route\RouteGroup;
 use League\Route\Router as LeagueRouter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,6 +18,14 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
     public function getRoutes(): array
     {
         return $this->routes;
+    }
+
+    /**
+     * @return RouteGroup[]
+     */
+    public function getGroups(): array
+    {
+        return $this->groups;
     }
 
     /**
