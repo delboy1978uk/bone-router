@@ -63,9 +63,15 @@ class RouterTreeCommand extends Command
             $paths[$route->getMethod()][] = $route->getPath();
         }
 
-        $tree = $this->buildTree($paths['GET']);
-        $output->writeln('/');
-        $this->printTree($tree, $output, '');
+        foreach ($paths as $method => $methodPaths) {
+
+            $io->info($method . ' paths:');
+            $tree = $this->buildTree($methodPaths);
+            $method === 'GET' ? array_shift($tree) : null;
+            $output->writeln('/');
+            $this->printTree($tree, $output, '');
+            $io->writeln('');
+        }
 
         return Command::SUCCESS;
     }
@@ -84,7 +90,6 @@ class RouterTreeCommand extends Command
                 $current = &$current[$part]; // Move down the tree
             }
         }
-        array_shift($tree);
 
         return $tree;
     }
@@ -102,17 +107,22 @@ class RouterTreeCommand extends Command
             $output->write($indent . '|_ ' . $key);
 
             // Check if this node has only one child, in which case we collapse it
+            $useChild = false;
+
             if (count($tree[$key]) == 1) {
                 // Find the only child node and print it directly without further recursion
                 $child = array_keys($tree[$key])[0];
                 $output->write( '/' . $child);
+                $useChild = true;
             }
+
             $output->write("\n");
+            $node = $useChild ? $tree[$key][$child] : $tree[$key];
 
             // Recursively print the subtree, adjusting the indentation
-            if (!empty($tree[$key]) && count($tree[$key]) > 1) {
+            if (!empty($node) && count($node) > 1) {
                 $newIndent = $index + 1 === $totalKeys ? $indent . '   ' : $indent . '|  ';
-                $this->printTree($tree[$key], $output, $newIndent);
+                $this->printTree($node, $output, $newIndent);
             }
 
             // If there's another sibling node, print '|'
