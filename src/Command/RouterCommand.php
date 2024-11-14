@@ -22,8 +22,11 @@ use function usort;
 class RouterCommand extends Command
 {
 
-    public function __construct(private readonly Router $router)
-    {
+    public function __construct(
+        private readonly Router $router,
+        private readonly array $blockedRoutes,
+        private readonly array $routeMiddleware
+    ) {
         parent::__construct('router:list');
     }
 
@@ -51,12 +54,37 @@ class RouterCommand extends Command
         $paths = [];
 
         foreach ($routes as $route) {
-            $paths[] = [$route->getMethod(), $route->getPath()];
+            $path = $route->getPath();
+            $method = $route->getMethod();
+            $blocked = $this->isBlocked($method, $path);
+            $middlewared = $this->isMiddlewared($method, $path);
+
+            if ($blocked) {
+               $path = '<fg=red>' .$path . '</>';
+            }
+
+            if ($middlewared) {
+               $path = '<fg=magenta>' .$path . '</>';
+            }
+
+            $paths[] = [$method, $path];
         }
 
         $io->table(['Method', 'Path'], $paths);
 
         return Command::SUCCESS;
+    }
+
+    private function isMiddlewared(string $method, string $path): bool
+    {
+        return in_array($path, $this->routeMiddleware)
+            || (isset($this->routeMiddleware[$method]) && array_key_exists($path, $this->routeMiddleware[$method]));
+    }
+
+    private function isBlocked(string $method, string $path): bool
+    {
+        return in_array($path, $this->blockedRoutes)
+            || (isset($this->blockedRoutes[$method]) && in_array($path, $this->blockedRoutes[$method]));
     }
 
     private function getRoutes(RouteGroup $group)

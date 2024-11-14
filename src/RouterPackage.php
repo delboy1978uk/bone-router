@@ -20,7 +20,9 @@ class RouterPackage implements RegistrationInterface
         $router = $c[Router::class] = new Router();
         $router->setStrategy($strategy);
         $consoleCommands = $c->has('consoleCommands') ? $c->get('consoleCommands') : [];
-        $consoleCommands[] = new RouterCommand($router);
+        $blockedRoutes = $c->has('blockedRoutes') ? $c->get('blockedRoutes') : [];
+        $routeMiddleware = $c->has('routeMiddleware') ? $c->get('routeMiddleware') : [];
+        $consoleCommands[] = new RouterCommand($router, $blockedRoutes, $routeMiddleware);
         $consoleCommands[] = new RouterTreeCommand($router);
         $c['consoleCommands'] = $consoleCommands;
     }
