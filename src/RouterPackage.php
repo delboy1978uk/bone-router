@@ -7,6 +7,7 @@ namespace Bone\Router;
 use Barnacle\Container;
 use Barnacle\RegistrationInterface;
 use Bone\Router\Command\RouterCommand;
+use Bone\Router\Command\RouterTreeCommand;
 use Bone\Router\Router;
 use League\Route\Strategy\ApplicationStrategy;
 
@@ -20,6 +21,7 @@ class RouterPackage implements RegistrationInterface
         $router->setStrategy($strategy);
         $consoleCommands = $c->has('consoleCommands') ? $c->get('consoleCommands') : [];
         $consoleCommands[] = new RouterCommand($router);
+        $consoleCommands[] = new RouterTreeCommand($router);
         $c['consoleCommands'] = $consoleCommands;
     }
 }
