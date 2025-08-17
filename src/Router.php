@@ -46,6 +46,31 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
         return $group;
     }
 
+    public function adminResource(string $urlSlug, string $controllerClass, ContainerInterface $c): RouteGroup
+    {
+        $factory = new ResponseFactory();
+        $strategy = new JsonStrategy($factory);
+        $strategy->setContainer($c);
+        $group = $this->group('/admin', function (RouteGroup $route) use ($controllerClass, $urlSlug) {
+            $route->map('GET', '/' . $urlSlug, [$controllerClass, 'index']);
+            $route->map('POST', '/' . $urlSlug, [$controllerClass, 'create']);
+            $route->map('GET', '/' . $urlSlug . '/{id}', [$controllerClass, 'read']);
+            $route->map('PATCH', '/' . $urlSlug . '/{id}', [$controllerClass, 'update']);
+            $route->map('DELETE', '/' . $urlSlug . '/{id}', [$controllerClass, 'delete']);
+
+            $route->map('GET', '/' . $urlSlug, [$controllerClass, 'index']);
+            $route->map('GET', '/' . $urlSlug . '/create', [$controllerClass, 'create']);
+            $route->map('GET', '/' . $urlSlug . '/{id}', [$controllerClass, 'view']);
+            $route->map('GET', '/' . $urlSlug . '/{id}/delete', [$controllerClass, 'delete']);
+            $route->map('GET', '/' . $urlSlug . '/{id}/edit', [$controllerClass, 'edit']);
+            $route->map('POST', '/' . $urlSlug . '/create', [$controllerClass, 'create']);
+            $route->map('POST', '/' . $urlSlug . '/{id}/delete', [$controllerClass, 'delete']);
+            $route->map('POST', '/' . $urlSlug . '/{id}/edit', [$controllerClass, 'edit']);
+        });
+
+        return $group;
+    }
+
     public function removeRoute(Route $routeToRemove): void
     {
         foreach ($this->routes as $index => $route) {
