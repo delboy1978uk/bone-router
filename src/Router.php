@@ -53,12 +53,6 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
         $strategy->setContainer($c);
         $group = $this->group('/admin', function (RouteGroup $route) use ($controllerClass, $urlSlug) {
             $route->map('GET', '/' . $urlSlug, [$controllerClass, 'index']);
-            $route->map('POST', '/' . $urlSlug, [$controllerClass, 'create']);
-            $route->map('GET', '/' . $urlSlug . '/{id}', [$controllerClass, 'read']);
-            $route->map('PATCH', '/' . $urlSlug . '/{id}', [$controllerClass, 'update']);
-            $route->map('DELETE', '/' . $urlSlug . '/{id}', [$controllerClass, 'delete']);
-
-            $route->map('GET', '/' . $urlSlug, [$controllerClass, 'index']);
             $route->map('GET', '/' . $urlSlug . '/create', [$controllerClass, 'create']);
             $route->map('GET', '/' . $urlSlug . '/{id}', [$controllerClass, 'view']);
             $route->map('GET', '/' . $urlSlug . '/{id}/delete', [$controllerClass, 'delete']);
