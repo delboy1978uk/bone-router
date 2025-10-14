@@ -33,7 +33,7 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
         $factory = new ResponseFactory();
         $strategy = new JsonStrategy($factory);
         $strategy->setContainer($c);
-        $tokenAuth = $c->get();
+//        $tokenAuth = $c->get();
         $group = $this->group('/api', function (RouteGroup $route) use ($controllerClass, $urlSlug) {
             $route->map('GET', '/' . $urlSlug, [$controllerClass, 'index']);
             $route->map('POST', '/' . $urlSlug, [$controllerClass, 'create']);
