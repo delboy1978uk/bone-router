@@ -33,6 +33,7 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
         $factory = new ResponseFactory();
         $strategy = new JsonStrategy($factory);
         $strategy->setContainer($c);
+        $tokenAuth = $c->get();
         $group = $this->group('/api', function (RouteGroup $route) use ($controllerClass, $urlSlug) {
             $route->map('GET', '/' . $urlSlug, [$controllerClass, 'index']);
             $route->map('POST', '/' . $urlSlug, [$controllerClass, 'create']);
@@ -46,16 +47,22 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
         return $group;
     }
 
-    public function adminResource(string $urlSlug, string $controllerClass, ContainerInterface $c): RouteGroup
+    public function adminResource(string $urlSlug, string $controllerClass, ContainerInterface $c, string $role = 'admin'): RouteGroup
     {
         if (!$c->get('Bone\User\Http\Middleware\SessionAuth')) {
             throw new \Exception('you must install delboy1978uk/bone-user');
+        }
+
+        if (!$c->get('Bone\Passport\Middleware\PassportControlMiddleware')) {
+            throw new \Exception('you must install delboy1978uk/bone-passport');
         }
 
         $factory = new ResponseFactory();
         $strategy = new JsonStrategy($factory);
         $strategy->setContainer($c);
         $sessionAuth = $c->get('Bone\User\Http\Middleware\SessionAuth');
+        $passportAuth = $c->get('Bone\Passport\Middleware\PassportControlMiddleware');
+        $passportAuth->withOptions($role);
         $group = $this->group('/admin', function (RouteGroup $route) use ($controllerClass, $urlSlug) {
             $route->map('GET', '/' . $urlSlug, [$controllerClass, 'index']);
             $route->map('GET', '/' . $urlSlug . '/create', [$controllerClass, 'create']);
@@ -66,7 +73,7 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
             $route->map('POST', '/' . $urlSlug . '/{id}/delete', [$controllerClass, 'delete']);
             $route->map('POST', '/' . $urlSlug . '/{id}/edit', [$controllerClass, 'edit']);
         });
-        $group->middlewares([$sessionAuth]);
+        $group->middlewares([$sessionAuth, $passportAuth]);
 
         return $group;
     }
