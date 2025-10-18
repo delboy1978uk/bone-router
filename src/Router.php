@@ -51,10 +51,14 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
     {
         if (!$c->has('Bone\User\Http\Middleware\SessionAuth')) {
             error_log('Admin rewsource not added. You must install delboy1978uk/bone-user');
+
+            return;
         }
 
         if (!$c->has('Bone\Passport\Middleware\PassportControlMiddleware')) {
             error_log('Admin rewsource not added. You must install delboy1978uk/bone-passport');
+
+            return;
         }
 
         $factory = new ResponseFactory();
