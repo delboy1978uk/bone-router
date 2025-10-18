@@ -47,14 +47,14 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
         return $group;
     }
 
-    public function adminResource(string $urlSlug, string $controllerClass, ContainerInterface $c, string $role = 'admin'): RouteGroup
+    public function adminResource(string $urlSlug, string $controllerClass, ContainerInterface $c, string $role = 'admin'): ?RouteGroup
     {
-        if (!$c->get('Bone\User\Http\Middleware\SessionAuth')) {
-            throw new \Exception('you must install delboy1978uk/bone-user');
+        if (!$c->has('Bone\User\Http\Middleware\SessionAuth')) {
+            error_log('Admin rewsource not added. You must install delboy1978uk/bone-user');
         }
 
-        if (!$c->get('Bone\Passport\Middleware\PassportControlMiddleware')) {
-            throw new \Exception('you must install delboy1978uk/bone-passport');
+        if (!$c->has('Bone\Passport\Middleware\PassportControlMiddleware')) {
+            error_log('Admin rewsource not added. You must install delboy1978uk/bone-passport');
         }
 
         $factory = new ResponseFactory();
