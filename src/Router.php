@@ -5,6 +5,7 @@ namespace Bone\Router;
 use Bone\Contracts\Container\ContainerInterface;
 use Bone\Http\Middleware\JsonParse;
 use Bone\Http\RouterInterface;
+use Bone\OAuth2\Http\Middleware\ResourceServerMiddleware;
 use Laminas\Diactoros\ResponseFactory;
 use League\Route\Route;
 use League\Route\RouteGroup;
@@ -33,7 +34,7 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
         $factory = new ResponseFactory();
         $strategy = new JsonStrategy($factory);
         $strategy->setContainer($c);
-//        $tokenAuth = $c->get();
+        $tokenAuth = $c->get(ResourceServerMiddleware::class);
         $group = $this->group('/api', function (RouteGroup $route) use ($controllerClass, $urlSlug) {
             $route->map('GET', '/' . $urlSlug, [$controllerClass, 'index']);
             $route->map('POST', '/' . $urlSlug, [$controllerClass, 'create']);
@@ -42,7 +43,7 @@ class Router extends LeagueRouter implements RequestHandlerInterface, RouterInte
             $route->map('DELETE', '/' . $urlSlug . '/{id}', [$controllerClass, 'delete']);
         });
         $group->setStrategy($strategy);
-        $group->middlewares([new JsonParse()]);
+        $group->middlewares([$tokenAuth, new JsonParse()]);
 
         return $group;
     }
