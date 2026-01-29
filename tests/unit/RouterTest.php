@@ -5,6 +5,7 @@ namespace Bone\Test\Router;
 use Barnacle\Container;
 use Barnacle\ExceptionotFoundException;
 use Exception;
+use Bone\Contracts\Service\TranslatorInterface;
 use Bone\Firewall\FirewallPackage;
 use Bone\Firewall\RouteFirewall;
 use Bone\Http\Middleware\HalCollection;
@@ -32,8 +33,6 @@ use Codeception\Test\Unit;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
-use Laminas\I18n\Translator\Loader\Gettext;
-use Laminas\I18n\Translator\Translator;
 use League\Route\Http\Exception\MethodNotAllowedException;
 use League\Route\Http\Exception\NotFoundException;
 use League\Route\Route;
@@ -50,6 +49,7 @@ class RouterTest extends Unit
     protected function _before()
     {
         $this->container = $c = new Container();
+        $this->container['packages'] = [];
         $this->container['viewFolder'] = 'tests/_data';
         $this->container['default_layout'] = 'whatever';
         $this->container['error_pages'] = [

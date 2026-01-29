@@ -17,9 +17,8 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "codeception/codeception": "^5.1",
-    "codeception/module-phpbrowser": "^3.0.0",
-    "codeception/module-asserts": "^3.0.0"
+    "boneframework/contracts": "^1.5",
+    "delboy1978uk/dev-tools": "^1.1"
   },
   "autoload": {
     "psr-4": {
@@ -29,6 +28,11 @@
   "autoload-dev": {
     "psr-4": {
       "Bone\\Test\\Router\\": "tests/unit/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "phpro/grumphp": false
     }
   }
 }
